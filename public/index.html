@@ -77,39 +77,39 @@ fjs.parentNode.insertBefore(js, fjs);
 # yum install curl
 </pre>
 
-<p>下載最新 release 的 <a href="https://github.com/lukas2511/letsencrypt.sh">letsencrypt.sh</a> 並且解開，目前是 0.2.0：</p>
+<p>下載最新 release 的 <a href="https://github.com/lukas2511/dehydrated">dehydrated</a> 並且解開，目前是 0.3.1：</p>
 
 <pre>
-$ # refer: https://github.com/lukas2511/letsencrypt.sh/releases
-$ curl -LO https://github.com/lukas2511/letsencrypt.sh/archive/v0.2.0.tar.gz
-$ tar -zxv -f v0.2.0.tar.gz
-$ cd letsencrypt.sh-0.2.0/
+$ # refer: https://github.com/lukas2511/dehydrated/releases
+$ curl -LO https://github.com/lukas2511/dehydrated/archive/v0.3.1.tar.gz
+$ tar -zxv -f v0.3.1.tar.gz
+$ cd dehydrated-0.3.1/
 </pre>
 
 或是透過 Git 下載最新版本：
 
 <pre>
-$ cd ~; git clone https://github.com/lukas2511/letsencrypt.sh.git
-$ cd letsencrypt.sh/
+$ cd ~; git clone https://github.com/lukas2511/dehydrated.git
+$ cd dehydrated/
 </pre>
 
 除了用 Git 下載外，也可以直接只抓執行檔：
 
 <pre>
-$ curl -LO https://raw.githubusercontent.com/lukas2511/letsencrypt.sh/master/letsencrypt.sh
+$ curl -LO https://raw.githubusercontent.com/lukas2511/dehydrated/master/dehydrated
 </pre>
 
-<p>把程式安裝到 <code>/etc/letsencrypt.sh/</code> 下：</p>
+<p>把程式安裝到 <code>/etc/dehydrated/</code> 下：</p>
 
 <pre>
-# mkdir /etc/letsencrypt.sh/
-# cp ~/letsencrypt.sh/letsencrypt.sh /etc/letsencrypt.sh/
+# mkdir /etc/dehydrated/
+# cp ~/dehydrated/dehydrated /etc/dehydrated/
 </pre>
 
-<p>設定 <code>config.sh</code> 並且建立對應的目錄 (最新版本的檔案名稱變成 <code>config</code>)：</p>
+<p>設定 <code>config</code> 並且建立對應的目錄 (舊版本的檔案名稱為 <code>config.sh</code>)：</p>
 
 <pre>
-# echo "WELLKNOWN=/var/www/letsencrypt" &gt; /etc/letsencrypt.sh/config.sh
+# echo "WELLKNOWN=/var/www/letsencrypt" &gt; /etc/dehydrated/config
 # mkdir -p /var/www/letsencrypt/
 </pre>
 
@@ -130,13 +130,13 @@ location /.well-known/acme-challenge/ {
 <p>第一次產生 SSL certificate，黃色的部份請代換成網域名稱：</p>
 
 <pre>
-# /etc/letsencrypt.sh/letsencrypt.sh -c -d <span class="yellow">letsencrypt.tw</span>
+# /etc/dehydrated/dehydrated -c -d <span class="yellow">letsencrypt.tw</span>
 </pre>
 
 <p>成功的話會有類似的輸出：</p>
 
 <pre>
-# INFO: Using main config file /etc/letsencrypt.sh/config.sh
+# INFO: Using main config file /etc/dehydrated/config
 Processing letsencrypt.tw
  + Signing domains...
  + Generating private key...
@@ -151,7 +151,7 @@ Processing letsencrypt.tw
  + Done!
 </pre>
 
-<p>成功後產生的檔案都在 <code>/etc/letsencrypt.sh/certs/<span class="yellow">letsencrypt.tw</span>/</code> 裡：</p>
+<p>成功後產生的檔案都在 <code>/etc/dehydrated/certs/<span class="yellow">letsencrypt.tw</span>/</code> 裡：</p>
 
 <pre>
 drwx------ 2 root root 4096 Feb 24 02:25 .
@@ -172,15 +172,15 @@ lrwxrwxrwx 1 root root   22 Feb 24 02:25 privkey.pem -&gt; privkey-1456280700.pe
 
 <pre>
 # for Apache
-SSLCertificateFile /etc/letsencrypt.sh/certs/<span class="yellow">letsencrypt.tw</span>/cert.pem
-SSLCertificateChainFile /etc/letsencrypt.sh/certs/<span class="yellow">letsencrypt.tw</span>/chain.pem
-SSLCertificateKeyFile /etc/letsencrypt.sh/certs/<span class="yellow">letsencrypt.tw</span>/privkey.pem
+SSLCertificateFile /etc/dehydrated/certs/<span class="yellow">letsencrypt.tw</span>/cert.pem
+SSLCertificateChainFile /etc/dehydrated/certs/<span class="yellow">letsencrypt.tw</span>/chain.pem
+SSLCertificateKeyFile /etc/dehydrated/certs/<span class="yellow">letsencrypt.tw</span>/privkey.pem
 </pre>
 
 <pre>
 # for nginx
-ssl_certificate /etc/letsencrypt.sh/certs/<span class="yellow">letsencrypt.tw</span>/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt.sh/certs/<span class="yellow">letsencrypt.tw</span>/privkey.pem;
+ssl_certificate /etc/dehydrated/certs/<span class="yellow">letsencrypt.tw</span>/fullchain.pem;
+ssl_certificate_key /etc/dehydrated/certs/<span class="yellow">letsencrypt.tw</span>/privkey.pem;
 </pre>
 
 <p>然後重新載入 Apache 或是 nginx 的設定檔 (或是直接重新啟動)：</p>
@@ -199,31 +199,31 @@ ssl_certificate_key /etc/letsencrypt.sh/certs/<span class="yellow">letsencrypt.t
 
 <pre>
 # for Apache
-0 0 * * * root sleep $(expr $(printf "\%d" "0x$(hostname | md5sum | cut -c 1-8)") \% 86400); ( /etc/letsencrypt.sh/letsencrypt.sh -c -d <span class="yellow">letsencrypt.tw</span>; /usr/sbin/service apache2 reload ) &gt; /tmp/letsencrypt.sh-<span class="yellow">letsencrypt.tw</span>.log 2&gt;&amp;1
+0 0 * * * root sleep $(expr $(printf "\%d" "0x$(hostname | md5sum | cut -c 1-8)") \% 86400); ( /etc/dehydrated/dehydrated -c -d <span class="yellow">letsencrypt.tw</span>; /usr/sbin/service apache2 reload ) &gt; /tmp/dehydrated-<span class="yellow">letsencrypt.tw</span>.log 2&gt;&amp;1
 </pre>
 
 <pre>
 # for nginx
-0 0 * * * root sleep $(expr $(printf "\%d" "0x$(hostname | md5sum | cut -c 1-8)") \% 86400); ( /etc/letsencrypt.sh/letsencrypt.sh -c -d <span class="yellow">letsencrypt.tw</span>; /usr/sbin/service nginx reload ) &gt; /tmp/letsencrypt.sh-<span class="yellow">letsencrypt.tw.log</span> 2&gt;&amp;1
+0 0 * * * root sleep $(expr $(printf "\%d" "0x$(hostname | md5sum | cut -c 1-8)") \% 86400); ( /etc/dehydrated/dehydrated -c -d <span class="yellow">letsencrypt.tw</span>; /usr/sbin/service nginx reload ) &gt; /tmp/dehydrated-<span class="yellow">letsencrypt.tw.log</span> 2&gt;&amp;1
 </pre>
 
 <h3>規劃</h3>
 
 <p>這段在說明上面為什麼這樣規劃，對於自動化 (像是 <a href="https://puppetlabs.com/">Puppet</a>、<a href="https://www.chef.io/chef/">Chef</a>) 會很有幫助。</p>
 
-<p>選用 letsencrypt.sh 而非官方的 <a href="https://github.com/letsencrypt/letsencrypt">letsencrypt client</a> 是因為 letsencrypt.sh 的需求相當低，只需要有 curl 與 <a href="https://www.openssl.org/">openssl</a> 就可以執行，相較於官方版本需要 <a href="https://www.python.org/">Python</a> 無論是對於初學者或是想要自動化的系統管理者都會比較輕鬆。</p>
+<p>選用 dehydrated 而非官方的 <a href="https://github.com/letsencrypt/letsencrypt">letsencrypt client</a> 是因為 dehydrated 的需求相當低，只需要有 curl 與 <a href="https://www.openssl.org/">openssl</a> 就可以執行，相較於官方版本需要 <a href="https://www.python.org/">Python</a> 無論是對於初學者或是想要自動化的系統管理者都會比較輕鬆。</p>
 
-<p>放到 <code>/etc/letsencrypt.sh/</code> 下的目的是避免之後各作業系統有提供 letsencrypt.sh 的套件而衝突到 (套件通常都會把可執行檔放到 <code>/usr/bin</code> 或是 <code>/usr/sbin</code> 下)，另外一方面 letsencrypt.sh 會吃同一個目錄下的 <code>config.sh</code>，這對於設定上可以少一些功夫。</p>
+<p>放到 <code>/etc/dehydrated/</code> 下的目的是避免之後各作業系統有提供 dehydrated 的套件而衝突到 (套件通常都會把可執行檔放到 <code>/usr/bin</code> 或是 <code>/usr/sbin</code> 下)，另外一方面 dehydrated 會吃同一個目錄下的 <code>config</code>，這對於設定上可以少一些功夫。</p>
 
-<p>在 cron job 裡面每天執行是因為 letsencrypt.sh 會自己檢查憑證有效期限，如果還有一個月以上的時間有效就不會 renew，所以不需要擔心每天執行會造成 Let's Encrypt 的伺服器產生負擔。</p>
+<p>在 cron job 裡面每天執行是因為 dehydrated 會自己檢查憑證有效期限，如果還有一個月以上的時間有效就不會 renew，所以不需要擔心每天執行會造成 Let's Encrypt 的伺服器產生負擔。</p>
 
-<p>在 cron job 中的 <code>sleep $(expr $(printf "\%d" "0x$(hostname | md5sum | cut -c 1-8)") \% 86400)</code> 設計是利用機器名稱產生出十六進位 hash 值，抓一部分轉成十進位後除以一天的秒數，得到餘數後先停這個秒數再跑 <code>letsencrypt.sh</code>，這樣可以避免同時間有太多機器到 Let's Encrypt 的伺服器，造成類似 DDoS 的攻擊。</p>
+<p>在 cron job 中的 <code>sleep $(expr $(printf "\%d" "0x$(hostname | md5sum | cut -c 1-8)") \% 86400)</code> 設計是利用機器名稱產生出十六進位 hash 值，抓一部分轉成十進位後除以一天的秒數，得到餘數後先停這個秒數再跑 <code>dehydrated</code>，這樣可以避免同時間有太多機器到 Let's Encrypt 的伺服器，造成類似 DDoS 的攻擊。</p>
 
 <h3>參考資料</h3>
 
 <ul>
     <li><a href="https://letsencrypt.org/">Let's Encrypt - Free SSL/TLS Certificates</a> (Let's Encrypt 官方網站)</li>
-    <li><a href="https://github.com/lukas2511/letsencrypt.sh">letsencrypt/acme client implemented as a shell-script</a> (letsencrypt.sh 官方網站)</li>
+    <li><a href="https://github.com/lukas2511/dehydrated">letsencrypt/acme client implemented as a shell-script</a> (dehydrated 官方網站)</li>
 </ul>
 
 </article>
