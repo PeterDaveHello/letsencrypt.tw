@@ -15,5 +15,6 @@ call_user_func(function(){
         return;
     }
 
-    // TODO
+    chdir(__DIR__ . '/..');
+    system('/usr/bin/git pull -v > /tmp/letsencrypt.tw-git-update.log 2>&1');
 });
