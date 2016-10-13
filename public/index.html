@@ -206,7 +206,7 @@ ssl_certificate_key /etc/dehydrated/certs/<span class="yellow">letsencrypt.tw</s
 # service nginx reload
 </pre>
 
-<p>接下來設定 <code>/etc/cron.d/dehydrated-<span class="yellow">dehydrated</span></code> (因為 <code>/etc/cron.d/</code> 裡面的檔名不能有 <code>.</code> 這個符號，用 <code>_</code> 取代)，讓 cron 每天自動檢查並更新：</p>
+<p>接下來設定 <code>/etc/cron.d/dehydrated-<span class="yellow">letsencrypt_tw</span></code> (因為 <code>/etc/cron.d/</code> 裡面的檔名不能有 <code>.</code> 這個符號，用 <code>_</code> 取代)，讓 cron 每天自動檢查並更新：</p>
 
 <pre>
 # for Apache
