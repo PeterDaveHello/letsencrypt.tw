@@ -109,21 +109,20 @@ $ curl -LO https://raw.githubusercontent.com/lukas2511/dehydrated/master/dehydra
 <p>設定 <code>config</code> 並且建立對應的目錄 (舊版本的檔案名稱為 <code>config.sh</code>)：</p>
 
 <pre>
-# echo "WELLKNOWN=/var/www/letsencrypt" &gt; /etc/dehydrated/config
-# mkdir -p /var/www/letsencrypt/
+# mkdir -p /var/www/dehydrated/
 </pre>
 
 <p>設定 <a href="https://httpd.apache.org/">Apache</a> 或是 <a href="http://nginx.org">nginx</a>，在要認證的 virtual host 裡加上：</p>
 
 <pre>
 # for Apache
-Alias /.well-known/acme-challenge/ /var/www/letsencrypt/
+Alias /.well-known/acme-challenge/ /var/www/dehydrated/
 </pre>
 
 <pre>
 # for nginx
 location /.well-known/acme-challenge/ {
-    alias /var/www/letsencrypt/;
+    alias /var/www/dehydrated/;
 }
 </pre>
 
@@ -195,7 +194,7 @@ ssl_certificate_key /etc/dehydrated/certs/<span class="yellow">letsencrypt.tw</s
 # service nginx reload
 </pre>
 
-<p>接下來設定 <code>/etc/cron.d/letsencrypt-<span class="yellow">letsencrypt_tw</span></code> (因為 <code>/etc/cron.d/</code> 裡面的檔名不能有 <code>.</code> 這個符號，用 <code>_</code> 取代)，讓 cron 每天自動檢查並更新：</p>
+<p>接下來設定 <code>/etc/cron.d/dehydrated-<span class="yellow">dehydrated</span></code> (因為 <code>/etc/cron.d/</code> 裡面的檔名不能有 <code>.</code> 這個符號，用 <code>_</code> 取代)，讓 cron 每天自動檢查並更新：</p>
 
 <pre>
 # for Apache
